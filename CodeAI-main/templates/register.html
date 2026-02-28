@@ -1,0 +1,450 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="description" content="CodeAI Pakistan - Register for AI-powered code analysis" />
+    <title>Register - CodeAI Pakistan</title>
+    
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%232dd4bf'/%3E%3Ctext x='32' y='38' font-size='28' text-anchor='middle' fill='%23081021' font-family='Arial, sans-serif'%3EC%3C/text%3E%3C/svg%3E" />
+    
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=3">
+    
+    <style>
+        .register-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: var(--space-6);
+            background: linear-gradient(180deg, var(--bg-primary), var(--bg-secondary));
+        }
+
+        .register-card {
+            width: 100%;
+            max-width: 480px;
+            background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
+            border-radius: var(--border-radius-xl);
+            padding: var(--space-10);
+            box-shadow: var(--shadow-xl), var(--shadow-glow);
+            border: 1px solid var(--border-primary);
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        .register-header {
+            text-align: center;
+            margin-bottom: var(--space-8);
+        }
+
+        .register-logo {
+            width: 80px;
+            height: 80px;
+            border-radius: var(--border-radius-lg);
+            margin: 0 auto var(--space-4);
+            box-shadow: var(--shadow-lg);
+            border: 2px solid var(--border-accent);
+            display: block;
+        }
+
+        .register-title {
+            font-size: var(--font-size-3xl);
+            font-weight: var(--font-weight-bold);
+            color: var(--text-primary);
+            margin: 0 0 var(--space-2) 0;
+        }
+
+        .register-subtitle {
+            font-size: var(--font-size-sm);
+            color: var(--text-muted);
+            margin: 0;
+        }
+
+        .register-form {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-5);
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-2);
+        }
+
+        .form-label {
+            font-size: var(--font-size-sm);
+            font-weight: var(--font-weight-medium);
+            color: var(--text-secondary);
+            margin: 0;
+        }
+
+        .form-input, .form-select {
+            width: 100%;
+            padding: var(--space-4);
+            border-radius: var(--border-radius-md);
+            border: 1px solid var(--border-primary);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-size: var(--font-size-base);
+            font-family: inherit;
+            transition: all var(--transition-normal);
+        }
+
+        .form-input:focus, .form-select:focus {
+            outline: 2px solid var(--accent-primary);
+            outline-offset: 2px;
+            border-color: var(--accent-primary);
+            background: var(--bg-secondary);
+        }
+
+        .form-input::placeholder {
+            color: var(--text-disabled);
+        }
+
+        .password-strength {
+            font-size: var(--font-size-xs);
+            margin-top: var(--space-1);
+            padding: var(--space-2);
+            border-radius: var(--border-radius-sm);
+            display: none;
+        }
+
+        .password-strength.weak {
+            display: block;
+            color: #ff6b6b;
+            background: rgba(255, 107, 107, 0.1);
+        }
+
+        .password-strength.medium {
+            display: block;
+            color: #fbbf24;
+            background: rgba(251, 191, 36, 0.1);
+        }
+
+        .password-strength.strong {
+            display: block;
+            color: #51cf66;
+            background: rgba(81, 207, 102, 0.1);
+        }
+
+        .role-info {
+            font-size: var(--font-size-xs);
+            color: var(--text-muted);
+            margin-top: var(--space-1);
+            padding: var(--space-2);
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: var(--border-radius-sm);
+        }
+
+        .register-btn {
+            width: 100%;
+            padding: var(--space-4);
+            border-radius: var(--border-radius-md);
+            border: none;
+            background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-tertiary) 100%);
+            color: #ffffff;
+            font-size: var(--font-size-base);
+            font-weight: var(--font-weight-semibold);
+            cursor: pointer;
+            transition: all var(--transition-normal);
+            box-shadow: var(--shadow-md);
+            margin-top: var(--space-2);
+        }
+
+        .register-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg), var(--shadow-glow);
+        }
+
+        .register-btn:active {
+            transform: translateY(0);
+        }
+
+        .register-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .register-error, .register-success {
+            padding: var(--space-3);
+            border-radius: var(--border-radius-md);
+            font-size: var(--font-size-sm);
+            text-align: center;
+            display: none;
+            margin-bottom: var(--space-3);
+        }
+
+        .register-error {
+            color: #ff6b6b;
+            background: rgba(255, 107, 107, 0.1);
+            border: 1px solid rgba(255, 107, 107, 0.2);
+        }
+
+        .register-success {
+            color: #51cf66;
+            background: rgba(81, 207, 102, 0.1);
+            border: 1px solid rgba(81, 207, 102, 0.2);
+        }
+
+        .register-error.show, .register-success.show {
+            display: block;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .login-link {
+            text-align: center;
+            margin-top: var(--space-6);
+            padding-top: var(--space-6);
+            border-top: 1px solid var(--border-primary);
+        }
+
+        .login-link a {
+            color: var(--accent-primary);
+            text-decoration: none;
+            font-weight: var(--font-weight-medium);
+            transition: color var(--transition-fast);
+        }
+
+        .login-link a:hover {
+            color: var(--accent-secondary);
+            text-decoration: underline;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .register-card {
+                padding: var(--space-6);
+            }
+
+            .register-title {
+                font-size: var(--font-size-2xl);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="register-container">
+        <div class="register-card">
+            <div class="register-header">
+                <img src="{{ url_for('static', filename='logo.jpeg') }}" 
+                     alt="CodeAI Pakistan Logo" 
+                     class="register-logo">
+                <h1 class="register-title">Create Account</h1>
+                <p class="register-subtitle">Join CodeAI Pakistan for AI-powered code analysis</p>
+            </div>
+
+            <form id="registerForm" class="register-form">
+                <div id="registerError" class="register-error" role="alert"></div>
+                <div id="registerSuccess" class="register-success" role="alert"></div>
+
+                <div class="form-group">
+                    <label for="username" class="form-label">Username *</label>
+                    <input type="text" 
+                           id="username" 
+                           name="username" 
+                           class="form-input" 
+                           placeholder="Choose a unique username"
+                           required
+                           minlength="3"
+                           maxlength="30"
+                           pattern="[a-zA-Z0-9_]+"
+                           autocomplete="username">
+                    <small style="font-size: var(--font-size-xs); color: var(--text-muted);">
+                        3-30 characters, letters, numbers, and underscores only
+                    </small>
+                </div>
+
+                <div class="form-group">
+                    <label for="password" class="form-label">Password *</label>
+                    <input type="password" 
+                           id="password" 
+                           name="password" 
+                           class="form-input" 
+                           placeholder="Create a strong password"
+                           required
+                           minlength="6"
+                           autocomplete="new-password">
+                    <div id="passwordStrength" class="password-strength"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="confirmPassword" class="form-label">Confirm Password *</label>
+                    <input type="password" 
+                           id="confirmPassword" 
+                           name="confirmPassword" 
+                           class="form-input" 
+                           placeholder="Re-enter your password"
+                           required
+                           minlength="6"
+                           autocomplete="new-password">
+                </div>
+
+                <div class="form-group">
+                    <label for="role" class="form-label">Account Type *</label>
+                    <select id="role" name="role" class="form-select" required>
+                        <option value="">-- Select Account Type --</option>
+                        <option value="user">User - Regular Access</option>
+                        <option value="admin">Admin - Full Access</option>
+                    </select>
+                    <div class="role-info" id="roleInfo"></div>
+                </div>
+
+                <button type="submit" class="register-btn" id="registerBtn">
+                    Create Account
+                </button>
+            </form>
+
+            <div class="login-link">
+                Already have an account? <a href="/login">Sign In</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const usernameInput = document.getElementById('username');
+        const passwordInput = document.getElementById('password');
+        const confirmPasswordInput = document.getElementById('confirmPassword');
+        const roleSelect = document.getElementById('role');
+        const registerForm = document.getElementById('registerForm');
+        const registerBtn = document.getElementById('registerBtn');
+        const errorDiv = document.getElementById('registerError');
+        const successDiv = document.getElementById('registerSuccess');
+        const passwordStrength = document.getElementById('passwordStrength');
+        const roleInfo = document.getElementById('roleInfo');
+
+        // Password strength checker
+        passwordInput.addEventListener('input', function() {
+            const password = this.value;
+            
+            if (password.length === 0) {
+                passwordStrength.style.display = 'none';
+                return;
+            }
+
+            let strength = 0;
+            if (password.length >= 8) strength++;
+            if (password.match(/[a-z]/)) strength++;
+            if (password.match(/[A-Z]/)) strength++;
+            if (password.match(/[0-9]/)) strength++;
+            if (password.match(/[^a-zA-Z0-9]/)) strength++;
+
+            passwordStrength.className = 'password-strength';
+            
+            if (strength <= 2) {
+                passwordStrength.classList.add('weak');
+                passwordStrength.textContent = '⚠️ Weak password - Add more characters and variety';
+            } else if (strength <= 3) {
+                passwordStrength.classList.add('medium');
+                passwordStrength.textContent = '⚡ Medium password - Good, but could be stronger';
+            } else {
+                passwordStrength.classList.add('strong');
+                passwordStrength.textContent = '✅ Strong password!';
+            }
+        });
+
+        // Role info display
+        roleSelect.addEventListener('change', function() {
+            const role = this.value;
+            
+            if (role === 'user') {
+                roleInfo.innerHTML = '👤 <strong>User:</strong> Upload and analyze code, view your submissions, generate reports';
+            } else if (role === 'admin') {
+                roleInfo.innerHTML = '⚡ <strong>Admin:</strong> Full access + admin dashboard, view all submissions, export data, manage users';
+            } else {
+                roleInfo.innerHTML = '';
+            }
+        });
+
+        // Form submission
+        registerForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            // Clear previous messages
+            errorDiv.classList.remove('show');
+            successDiv.classList.remove('show');
+            
+            const username = usernameInput.value.trim();
+            const password = passwordInput.value;
+            const confirmPassword = confirmPasswordInput.value;
+            const role = roleSelect.value;
+            
+            // Validation
+            if (password !== confirmPassword) {
+                errorDiv.textContent = '❌ Passwords do not match';
+                errorDiv.classList.add('show');
+                return;
+            }
+
+            if (password.length < 6) {
+                errorDiv.textContent = '❌ Password must be at least 6 characters';
+                errorDiv.classList.add('show');
+                return;
+            }
+
+            if (!role) {
+                errorDiv.textContent = '❌ Please select an account type';
+                errorDiv.classList.add('show');
+                return;
+            }
+            
+            // Disable button during request
+            registerBtn.disabled = true;
+            registerBtn.textContent = 'Creating Account...';
+            
+            try {
+                const response = await fetch('/api/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ username, password, role })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    successDiv.textContent = '✅ Account created successfully! Redirecting to login...';
+                    successDiv.classList.add('show');
+                    
+                    // Clear form
+                    registerForm.reset();
+                    passwordStrength.style.display = 'none';
+                    roleInfo.innerHTML = '';
+                    
+                    // Redirect to login after 2 seconds
+                    setTimeout(() => {
+                        window.location.href = '/login';
+                    }, 2000);
+                } else {
+                    errorDiv.textContent = '❌ ' + (data.error || 'Registration failed');
+                    errorDiv.classList.add('show');
+                    
+                    registerBtn.disabled = false;
+                    registerBtn.textContent = 'Create Account';
+                }
+                
+            } catch (error) {
+                console.error('Registration error:', error);
+                errorDiv.textContent = '❌ Connection error. Please try again.';
+                errorDiv.classList.add('show');
+                
+                registerBtn.disabled = false;
+                registerBtn.textContent = 'Create Account';
+            }
+        });
+    </script>
+</body>
+
+</html>

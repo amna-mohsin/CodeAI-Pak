@@ -1,0 +1,27 @@
+# Web Framework
+flask==3.0.0
+werkzeug==3.0.1
+python-dotenv==1.0.0
+
+# AI/ML Models
+transformers==4.40.0
+torch==2.2.1
+huggingface_hub==0.21.0
+google-generativeai==0.3.0
+
+# Database
+pymongo==4.6.1
+
+# PDF & Document Generation
+reportlab==4.0.7
+weasyprint==60.0
+
+# Code Analysis & Testing
+python-multipart==0.0.6
+coverage==7.4.1
+bandit==1.7.6
+radon==6.0.1
+
+# Data & Utilities
+datasets==2.18.0
+requests==2.31.0

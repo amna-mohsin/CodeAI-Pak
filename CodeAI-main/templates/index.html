@@ -1,0 +1,284 @@
+{% extends "layout.html" %}
+{% block content %}
+<!-- INDEX.HTML -->
+<!-- Dashboard Grid Layout -->
+<div class="dashboard-container">
+    
+    <!-- Left Column: Upload & Quick Stats -->
+    <aside class="dashboard-sidebar">
+        
+        <!-- File Upload Section -->
+        <section class="dashboard-card upload-section" role="region" aria-labelledby="upload-heading">
+            <h2 id="upload-heading" class="card-title">
+                <span class="icon">📁</span>
+                Upload Code
+            </h2>
+            
+            <form id="uploadForm" class="upload-form">
+                <label class="filebox" for="fileInput">
+                    <input id="fileInput" 
+                           name="file" 
+                           type="file" 
+                           accept="{{ allowed }}" 
+                           required />
+                    <span id="fileLabel" class="file-label">
+                        <span class="icon">☁️</span>
+                        <span class="text">Choose file or drag here</span>
+                        <span class="hint">Supported: .py, .java</span>
+                    </span>
+                </label>
+
+                <div class="form-actions">
+                    <button id="analyzeBtn" type="submit" class="btn primary">
+                        <span class="btn-text">🔍 Analyze Code</span>
+                        <span class="btn-loading" style="display: none;">Analyzing...</span>
+                    </button>
+                    <button id="resetBtn" type="button" class="btn outline">
+                        🔄 Reset
+                    </button>
+                </div>
+
+                <div id="errorMsg" class="error" role="alert" style="display:none"></div>
+            </form>
+
+            <div class="quality-targets">
+                <h3 class="targets-title">Quality Targets</h3>
+                <ul class="targets-list">
+                    <li>✓ Code Quality ≥ 80%</li>
+                    <li>✓ Test Coverage ≥ 70%</li>
+                    <li>✓ Maintainability ≥ 75%</li>
+                    <li>✓ Readability ≥ 80%</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Status Meter -->
+        <section class="dashboard-card status-section" role="status" aria-live="polite">
+            <h2 class="card-title">
+                <span class="icon">📊</span>
+                Quality Score
+            </h2>
+            
+            <div class="meter-container">
+                <div class="circular-meter">
+                    <svg class="progress-ring" width="140" height="140">
+                        <circle class="progress-ring-circle-bg" 
+                                cx="70" cy="70" r="60" 
+                                stroke-width="12" 
+                                fill="none"/>
+                        <circle id="progressCircle" 
+                                class="progress-ring-circle" 
+                                cx="70" cy="70" r="60" 
+                                stroke-width="12" 
+                                fill="none"/>
+                    </svg>
+                    <div class="circle-content">
+                        <div id="circleText" class="circle-value">--%</div>
+                        <div class="circle-label">Overall</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="quick-stats">
+                <div class="stat-item">
+                    <span class="stat-label">Quality:</span>
+                    <span id="qualityStat" class="stat-value">—</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Coverage:</span>
+                    <span id="coverageStat" class="stat-value">—</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Level:</span>
+                    <span id="qualityLevel" class="stat-value">—</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Complexity:</span>
+                    <span id="timeComplexity" class="stat-value">—</span>
+                </div>
+            </div>
+        </section>
+
+    </aside>
+
+    <!-- Right Column: Results & Analysis -->
+    <main class="dashboard-main">
+        
+        <div id="results" class="results-container" style="display:none">
+            
+            <!-- Core Metrics Grid -->
+            <section class="dashboard-card metrics-section">
+                <div class="card-header">
+                    <h2 class="card-title">
+                        <span class="icon">📈</span>
+                        Core Metrics
+                    </h2>
+                    <button id="translateBtn" class="btn outline btn-sm" title="Translate to Urdu">
+                        🌐 Translate to Urdu
+                    </button>
+                </div>
+                
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <h4 class="metric-title">Code Review</h4>
+                        <div class="metric-bar">
+                            <div id="barReview" class="bar-fill"></div>
+                        </div>
+                        <div id="numReview" class="metric-value">—</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <h4 class="metric-title">Test Generator</h4>
+                        <div class="metric-bar">
+                            <div id="barTest" class="bar-fill"></div>
+                        </div>
+                        <div id="numTest" class="metric-value">—</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <h4 class="metric-title">Documentation</h4>
+                        <div class="metric-bar">
+                            <div id="barDoc" class="bar-fill"></div>
+                        </div>
+                        <div id="numDoc" class="metric-value">—</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <h4 class="metric-title">User Experience</h4>
+                        <div class="metric-bar">
+                            <div id="barUx" class="bar-fill"></div>
+                        </div>
+                        <div id="numUx" class="metric-value">—</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Enhanced Analysis -->
+            <section class="dashboard-card analysis-section">
+                <h2 class="card-title">
+                    <span class="icon">🔬</span>
+                    Enhanced Analysis
+                </h2>
+                
+                <div class="analysis-grid">
+                    <div class="analysis-item">
+                        <div class="analysis-label">Quality Level</div>
+                        <div id="qualityLevelValue" class="analysis-value">—</div>
+                    </div>
+                    <div class="analysis-item">
+                        <div class="analysis-label">Time Complexity</div>
+                        <div id="timeComplexityValue" class="analysis-value">—</div>
+                    </div>
+                    <div class="analysis-item">
+                        <div class="analysis-label">Bug Detection</div>
+                        <div id="bugEfficiencyValue" class="analysis-value">—</div>
+                    </div>
+                    <div class="analysis-item">
+                        <div class="analysis-label">Bug Severity</div>
+                        <div id="bugSeverityValue" class="analysis-value">—</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Gemini Metrics -->
+            <section id="geminiMetrics" class="dashboard-card gemini-section" style="display:none;">
+                <h2 class="card-title">
+                    <span class="icon">🤖</span>
+                    AI Quality Assessment
+                </h2>
+                
+                <div class="gemini-grid">
+                    <div class="gemini-item">
+                        <div class="gemini-label">AI Quality Score</div>
+                        <div id="geminiQualityValue" class="gemini-value">—</div>
+                    </div>
+                    <div class="gemini-item">
+                        <div class="gemini-label">Maintainability</div>
+                        <div id="maintainabilityValue" class="gemini-value">—</div>
+                    </div>
+                    <div class="gemini-item">
+                        <div class="gemini-label">Readability</div>
+                        <div id="readabilityValue" class="gemini-value">—</div>
+                    </div>
+                    <div class="gemini-item">
+                        <div class="gemini-label">Best Practices</div>
+                        <div id="bestPracticesValue" class="gemini-value">—</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Bug Report -->
+            <section class="dashboard-card output-section">
+                <h3 class="card-title">
+                    <span class="icon">🐛</span>
+                    Bug Report
+                </h3>
+                <div class="output-content">
+                    <pre id="bugReportPre" class="output-text"></pre>
+                </div>
+            </section>
+
+            <!-- Corrected Code -->
+            <section class="dashboard-card output-section">
+                <h3 class="card-title">
+                    <span class="icon">✨</span>
+                    Corrected Code
+                </h3>
+                <div class="output-content">
+                    <pre id="correctedCodePre" class="output-text"></pre>
+                </div>
+            </section>
+
+            <!-- Download Actions -->
+            <section class="dashboard-card actions-section">
+                <h3 class="card-title">
+                    <span class="icon">💾</span>
+                    Export Reports
+                </h3>
+                <div class="export-actions">
+                    <a id="downloadReport" class="btn outline" href="#" style="display:none;">
+                        📄 Download JSON
+                    </a>
+                    <a id="downloadPdf" class="btn outline" href="#" style="display:none;">
+                        📑 Download PDF
+                    </a>
+                </div>
+            </section>
+
+        </div>
+
+        <!-- Welcome State (shown when no analysis yet) -->
+        <div id="welcomeState" class="welcome-state">
+            <div class="welcome-content">
+                <div class="welcome-icon">🚀</div>
+                <h2 class="welcome-title">Welcome to CodeAI Pakistan</h2>
+                <p class="welcome-text">
+                    Upload your Python or Java code to get started with AI-powered analysis,
+                    bug detection, automated testing, and comprehensive documentation.
+                </p>
+                <div class="welcome-features">
+                    <div class="feature-item">
+                        <span class="feature-icon"></span>
+                        <span class="feature-text">Automated Code Review</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon"></span>
+                        <span class="feature-text">Test Generation</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon"></span>
+                        <span class="feature-text">Documentation Creation</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon"></span>
+                        <span class="feature-text">Bug Detection</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+</div>
+
+{% endblock %}
